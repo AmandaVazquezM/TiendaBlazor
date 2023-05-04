@@ -1,0 +1,19 @@
+﻿@inherits LayoutComponentBase
+
+<PageTitle>TiendaBlazor</PageTitle>
+
+<div class="page">
+    <div style="background-image:none;background-color:palevioletred;" class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4" style="background-color: palevioletred">
+           <h2 class="navbar-brand">Sweet Mandy Cakes</h2>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>

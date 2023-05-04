@@ -1,0 +1,70 @@
+﻿@page "/about"
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+
+<h1>About Us</h1>
+<div>
+<p>
+    Bienvenido a nuestra pastelería artesana familiar ubicada en una calle emblemática de Madrid. En Sweet Mandy Cakes, llevamos más de 20 años ofreciendo deliciosos dulces y pasteles de la más alta calidad. Nuestra pastelería está inspirada en las antiguas recetas de la abuela, y cada uno de nuestros productos se hace con ingredientes frescos y de alta calidad.
+
+    Nuestro equipo de pasteleros altamente capacitados trabaja arduamente para crear pasteles y dulces irresistibles. Nos enorgullece hacer todo a mano, desde la masa hasta los adornos. Además, ofrecemos una amplia variedad de pasteles personalizados y porciones individuales para todas las ocasiones.
+
+    Además, nuestras instalaciones son modernas y acogedoras, lo que le brinda una experiencia de compra excepcional. Pase y tome asiento en nuestro cómodo comedor, donde puede disfrutar de una taza de café recién hecho y degustar algunos de nuestros deliciosos productos.
+
+    En Sweet Mandy Cakes, estamos comprometidos con la calidad y la atención al detalle. Siempre trabajamos para asegurarnos de que nuestros clientes se vayan felices y satisfechos. ¡Esperamos su visita en nuestra pastelería ubicada en la calle Real de Madrid!
+</p>
+<br />
+    <div class="container-fluid">
+        <div class="row p-3">
+            <div class="col">
+                <RadzenGoogleMap @ref=map style="width:80%; height: 400px" Options=@(new Dictionary<string, object> { { "disableDoubleClickZoom", true } })
+                                 Zoom=@zoom Center=@(new GoogleMapPosition() { Lat = 42.6977, Lng = 23.3219 }) MarkerClick=@OnMarkerClick>
+                    <Markers>
+                       <RadzenGoogleMapMarker Title="Madrid " Label="Madrid" Position=@(new GoogleMapPosition() { Lat = 40.4168, Lng = -3.7038 }) />
+                    </Markers>
+                </RadzenGoogleMap>
+            </div>
+        </div>
+    </div>
+
+</div>
+<hr />
+<h1>Contacta con nosotros</h1>
+<form>
+    <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" class="form-control" id="name" placeholder="Enter your name">
+    </div>
+    <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" class="form-control" id="email" placeholder="Enter your email">
+    </div>
+    <div class="form-group">
+        <label for="message">Message:</label>
+        <textarea class="form-control" id="message" rows="3" placeholder="Enter your message"></textarea>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+@code {
+    int zoom = 3;
+    
+    RadzenGoogleMap map;
+
+
+    async Task OnMarkerClick(RadzenGoogleMapMarker marker)
+    {
+        var message = $"Custom information about <b>{marker.Title}</b>";
+
+        var code = $@"
+var map = Radzen['{map.UniqueID}'].instance;
+var marker = map.markers.find(m => m.title == '{marker.Title}');
+if(window.infoWindow) {{window.infoWindow.close();}}
+window.infoWindow = new google.maps.InfoWindow({{content: '{message}'}});
+setTimeout(() => window.infoWindow.open(map, marker), 200);
+";
+
+        await JSRuntime.InvokeVoidAsync("eval", code);
+    }
+}
